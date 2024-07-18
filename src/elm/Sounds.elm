@@ -29,6 +29,7 @@ type Profile
     = ClassicWeird
     | Riot
     | New
+    | Funky
 
 
 poster : Profile -> Image
@@ -44,6 +45,10 @@ poster profile =
 
                 New ->
                     "WhatsNew-1.webp"
+
+                Funky ->
+                    "funky.webp"
+
     , alt =
         case profile of
             ClassicWeird ->
@@ -54,6 +59,9 @@ poster profile =
 
             New ->
                 "Stylized logo saying \"What's new\""
+
+            Funky ->
+                "Photography of George Clinton"
     }
 
 
@@ -75,8 +83,10 @@ nextProfile list =
             nextProfile (New :: list)
 
         Just New ->
-            list
+            nextProfile (Funky :: list)
 
+        Just Funky ->
+            list
 
 title : Profile -> String
 title profile =
@@ -90,6 +100,9 @@ title profile =
         New ->
             "New 2022/11"
 
+        Funky ->
+            "Funky"
+
 
 code : Profile -> String
 code profile =
@@ -102,6 +115,9 @@ code profile =
 
         New ->
             "New2022/11"
+
+        Funky ->
+            "Funky"
 
 
 fromCode : String -> Profile
@@ -140,6 +156,11 @@ soundsOf profile =
         New ->
             ( "classic-weird/banane.wav.mp3"
             , newSounds
+            )
+
+        Funky ->
+            ( "funky/banane.wav.mp3"
+            , funky
             )
 
 
@@ -186,6 +207,10 @@ riot =
     , "riot/ravachole.mp3"
     , "riot/eiffel_larue.wav.mp3"
     ]
+
+funky : List Sound
+funky =
+    ["funky/banane.wav.mp3"]
 
 
 classicWeird : List Sound
