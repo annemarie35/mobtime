@@ -4,3 +4,5 @@ start:
 install: 
 	pnpm install
 
+build *FLAGS:
+	pnpm build {{FLAGS}}

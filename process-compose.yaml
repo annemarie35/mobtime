@@ -24,4 +24,4 @@ processes:
                 scheme: http
                 port: 3000
     front:
-        command: 'pnpx vite build --watch'
+        command: 'just build --watch'
