@@ -1,51 +1,35 @@
-module Model.Role exposing (Role, decoder, driver, encode, fromString, navigator, print, toNextUp)
+module Model.Role exposing (Role, decoder, driver, encode, fromString, navigator, toNextUp)
 
 import Json.Decode as Decode
 import Json.Encode as Json
 
 
-type Role
-    = Role String
-
-
-
--- Private
-
-
-open : Role -> String
-open role =
-    case role of
-        Role value ->
-            value
-
-
-
--- Public
+type alias Role =
+    { name : String, description : Maybe String }
 
 
 toNextUp : Role -> Role
 toNextUp lastSpecialRole =
-    fromString <| "Next " ++ print lastSpecialRole
+    fromString <| "Next " ++ lastSpecialRole.name
 
 
 driver : Role
 driver =
-    Role "Driver"
+    { name = "Driver"
+    , description = Just "The person at the keyboard. They should not take initiative. They should listen to what the navigator tells them. They should only ask clarification questions."
+    }
 
 
 navigator : Role
 navigator =
-    Role "Navigator"
+    { name = "Navigator"
+    , description = Just "The person that tells the driver what to do. They should give the intention at the highest level. They should not go into details unless requested by the driver."
+    }
 
 
 fromString : String -> Role
-fromString =
-    Role
-
-
-print : Role -> String
-print =
-    open
+fromString name =
+    { name = name, description = Nothing }
 
 
 
@@ -54,9 +38,29 @@ print =
 
 encode : Role -> Json.Value
 encode role =
-    role |> open |> Json.string
+    Json.object
+        [ ( "name", Json.string role.name )
+        , ( "description", role.description |> Maybe.withDefault "" |> Json.string )
+        ]
 
 
 decoder : Decode.Decoder Role
 decoder =
-    Decode.string |> Decode.map fromString
+    Decode.map2 Role
+        (Decode.field "name" Decode.string)
+        (Decode.field "description" emptyStringToMaybe)
+
+
+emptyStringToMaybe : Decode.Decoder (Maybe String)
+emptyStringToMaybe =
+    Decode.string
+        |> Decode.map String.trim
+        |> Decode.map
+            (\value ->
+                case value of
+                    "" ->
+                        Nothing
+
+                    _ ->
+                        Just value
+            )

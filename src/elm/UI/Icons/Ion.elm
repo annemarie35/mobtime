@@ -16,6 +16,7 @@ module UI.Icons.Ion exposing
     , people
     , play
     , plus
+    , questionMark
     , rotate
     , settings
     , share
@@ -166,6 +167,11 @@ mute =
 people : Icon msg
 people =
     display Ionicon.personStalker
+
+
+questionMark : Icon msg
+questionMark =
+    display Ionicon.helpCircled
 
 
 display :

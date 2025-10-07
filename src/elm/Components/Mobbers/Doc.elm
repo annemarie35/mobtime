@@ -12,7 +12,7 @@ import Model.Role as Role
 props : Components.Mobbers.View.Props (ElmBook.Msg x)
 props =
     { people = [ "Pin", "Manon", "Thomas", "Pauline", "Jeff", "Amélie" ] |> toMobbers
-    , roles = [ "Driver", "Navigator" ] |> List.map Role.fromString
+    , roles = [ Role.driver, Role.navigator ]
     , onShuffle = logAction "Shuffled"
     , onRotate = logAction "Rotated"
     , onSettings = logAction "Go to Settings"

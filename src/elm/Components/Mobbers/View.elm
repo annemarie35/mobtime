@@ -256,8 +256,24 @@ iconForRole role =
 displayRoleName : Role -> Html.Html msg
 displayRoleName lastSpecialRole =
     Html.div
-        [ Attr.css [ Typography.fontSize Typography.s, Css.fontWeight Css.lighter ] ]
-        [ Html.text <| Role.print lastSpecialRole
+        [ Attr.css
+            [ Typography.fontSize Typography.s
+            , Css.fontWeight Css.lighter
+            , Css.displayFlex
+            , Css.alignItems Css.center
+            , Css.lineHeight <| Css.int 1
+            , UI.Css.gap <| Size.px 6
+            ]
+        ]
+        [ Html.text lastSpecialRole.name
+        , case lastSpecialRole.description of
+            Just description ->
+                Html.span
+                    [ Attr.title description ]
+                    [ UI.Icons.Ion.questionMark { size = Size.rem 1, color = Color.black } ]
+
+            Nothing ->
+                Html.text ""
         ]
 
 
