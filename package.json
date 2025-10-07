@@ -3,6 +3,9 @@
     "version": "1.0.22",
     "description": "",
     "source": "src/index.html",
+    "engines": {
+        "node": "lts"
+    },
     "scripts": {
         "build": "vite build",
         "start": "node server/app.js",
