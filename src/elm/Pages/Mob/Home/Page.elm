@@ -9,13 +9,13 @@ module Pages.Mob.Home.Page exposing
     , view
     )
 
+import Components.Clock.View
 import Components.Mobbers.Component
 import Components.Playlist.View
 import Css
 import Effect exposing (Effect)
 import Html.Styled as Html exposing (..)
 import Html.Styled.Attributes as Attr
-import Html.Styled.Events as Evts
 import Js.Commands
 import Lib.Alarm
 import Lib.Duration as Duration
@@ -32,8 +32,6 @@ import Task
 import Time
 import UI.Button.RoundIcon
 import UI.Button.View
-import UI.CircularProgressBar
-import UI.Color as Color
 import UI.Column as Column
 import UI.Css
 import UI.Icons.Ion
@@ -328,7 +326,7 @@ clockArea mob model =
             , Css.marginTop <| Size.toElmCss Space.s
             ]
         ]
-        [ displayClock []
+        [ Components.Clock.View.view []
             { state = mob.clock
             , now = model.now
             , buttonSize = UI.Button.View.S
@@ -373,8 +371,9 @@ clockArea mob model =
                 { strokeWidth = Size.rem 0.4
                 , diameter = Size.rem 10
                 }
+            , refreshRate = turnRefreshRate
             }
-        , displayClock
+        , Components.Clock.View.view
             [ Attr.css
                 [ Css.marginTop <| Css.rem 6
                 ]
@@ -423,6 +422,7 @@ clockArea mob model =
                 { strokeWidth = Size.rem 0.2
                 , diameter = Size.rem 6
                 }
+            , refreshRate = turnRefreshRate
             }
         , UI.Button.RoundIcon.view
             [ Attr.css
@@ -488,105 +488,6 @@ clockArea mob model =
                 , color = Palettes.monochrome.on.background
                 }
             ]
-        ]
-
-
-displayClock :
-    List (Html.Attribute Msg)
-    ->
-        { state : Clock.ClockState
-        , now : Time.Posix
-        , buttonSize : UI.Button.View.Size
-        , messages :
-            { onStart : Maybe Msg
-            , onStop : Msg
-            }
-        , content : Html.Html Msg
-        , style :
-            { strokeWidth : Size.Size
-            , diameter : Size.Size
-            }
-        }
-    -> Html Msg
-displayClock attributes { state, buttonSize, now, style, messages, content } =
-    Html.div
-        (Attr.css
-            [ Css.position Css.relative
-            , Css.maxWidth Css.fitContent
-            ]
-            :: attributes
-        )
-        [ UI.CircularProgressBar.draw
-            { colors =
-                { main = Palettes.monochrome.on.background
-                , background = Palettes.monochrome.on.background |> Color.lighten 0.9
-                , border = Palettes.monochrome.on.background |> Color.lighten 0.7
-                }
-            , strokeWidth = style.strokeWidth
-            , diameter = style.diameter
-            , progress = Clock.ratio now state
-            , refreshRate = turnRefreshRate |> Duration.multiply 2
-            }
-        , Html.button
-            [ case state of
-                Clock.On _ ->
-                    Evts.onClick messages.onStop
-
-                Clock.Off ->
-                    case messages.onStart of
-                        Just msg ->
-                            Evts.onClick msg
-
-                        Nothing ->
-                            Attr.disabled True
-            , Attr.css
-                [ Css.backgroundColor Css.transparent
-                , Css.position Css.absolute
-                , Css.width <| Css.pct 100
-                , Css.height <| Css.pct 100
-                , Css.overflow Css.hidden
-                , Css.top Css.zero
-                , Css.left Css.zero
-                , Css.borderRadius <| Css.pct 50
-                , Css.color <| Color.toElmCss <| Palettes.monochrome.on.background
-                , Css.hover [ Css.backgroundColor Css.transparent ]
-                , Css.disabled
-                    [ Css.hover [ Css.backgroundColor Css.transparent ]
-                    , Css.opacity <| Css.num 1
-                    ]
-                ]
-            ]
-            [ Html.div
-                [ Attr.css
-                    (UI.Css.center
-                        ++ [ Css.displayFlex
-                           , Css.flexDirection Css.column
-                           , Css.alignItems Css.center
-                           , Css.width <| Css.pct 100
-                           ]
-                    )
-                ]
-                [ content
-                ]
-            ]
-        , case state of
-            Clock.On _ ->
-                UI.Button.View.button
-                    [ Attr.css
-                        [ Css.position Css.absolute
-                        , Css.bottom Css.zero
-                        , Css.left <| Css.pct 50
-                        , Css.transform <| Css.translate2 (Css.pct -50) (Css.pct 40)
-                        ]
-                    ]
-                    { content = UI.Button.View.Both { icon = UI.Icons.Ion.stop, text = "Stop" }
-                    , variant = UI.Button.View.Primary
-                    , size = buttonSize
-                    , action = UI.Button.View.OnPress <| Just messages.onStop
-                    }
-
-            Clock.Off ->
-                Html.span [] []
         ]
 
 

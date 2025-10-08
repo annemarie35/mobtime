@@ -1,5 +1,6 @@
 module Doc exposing (SharedState, main)
 
+import Components.Clock.Doc
 import Components.Form.Input.Doc
 import Components.Form.Toggle.Doc
 import Components.Form.Volume.Doc
@@ -87,6 +88,7 @@ main =
                 , Components.Mobbers.Doc.doc
                 , Components.Playlist.Doc.doc
                 , Components.Log.doc
+                , Components.Clock.Doc.doc
                 ]
               )
             , ( "Form"
