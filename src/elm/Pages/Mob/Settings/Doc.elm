@@ -1,5 +1,6 @@
 module Pages.Mob.Settings.Doc exposing (theChapter)
 
+import Components.Form.Volume.Type as Volume
 import ElmBook.Actions exposing (logAction, logActionWith)
 import ElmBook.Chapter exposing (chapter, renderComponentList)
 import ElmBook.ElmCSS exposing (Chapter)
@@ -15,28 +16,34 @@ theChapter =
         |> renderComponentList
             [ ( "Page"
               , Page.view
-                    { mob = MobName "Awesome"
-                    , onBack = logAction "Back"
-                    , onTurnLengthChange = logActionWith Lib.Duration.print "Turn changed"
-                    , turnLength = Lib.Duration.ofMinutes 6
-                    , onPomodoroChange = logActionWith Lib.Duration.print "Pomodoro changed"
-                    , pomodoro = Lib.Duration.ofMinutes 25
-                    , currentPlaylist = Sounds.ClassicWeird
-                    , onPlaylistChange = logActionWith Sounds.title "Playlist changed"
+                    { currentPlaylist = Sounds.ClassicWeird
                     , devMode = False
+                    , mob = MobName "Awesome"
+                    , onBack = logAction "Back"
+                    , onPlaylistChange = logActionWith Sounds.title "Playlist changed"
+                    , onPomodoroChange = logActionWith Lib.Duration.print "Pomodoro changed"
+                    , onTurnLengthChange = logActionWith Lib.Duration.print "Turn changed"
+                    , onVolumeChange = logActionWith Volume.print "Volume changed"
+                    , onVolumeCheck = logAction "Volume check"
+                    , pomodoro = Lib.Duration.ofMinutes 25
+                    , turnLength = Lib.Duration.ofMinutes 6
+                    , volume = Volume.default
                     }
               )
             , ( "In dev mode"
               , Page.view
-                    { mob = MobName "Awesome"
-                    , onBack = logAction "Back"
-                    , onTurnLengthChange = logActionWith Lib.Duration.print "Turn changed"
-                    , turnLength = Lib.Duration.ofSeconds 6
-                    , onPomodoroChange = logActionWith Lib.Duration.print "Pomodoro changed"
-                    , pomodoro = Lib.Duration.ofSeconds 25
-                    , currentPlaylist = Sounds.ClassicWeird
-                    , onPlaylistChange = logActionWith Sounds.title "Playlist changed"
+                    { currentPlaylist = Sounds.ClassicWeird
                     , devMode = True
+                    , mob = MobName "Awesome"
+                    , onBack = logAction "Back"
+                    , onPlaylistChange = logActionWith Sounds.title "Playlist changed"
+                    , onPomodoroChange = logActionWith Lib.Duration.print "Pomodoro changed"
+                    , onTurnLengthChange = logActionWith Lib.Duration.print "Turn changed"
+                    , onVolumeChange = logActionWith Volume.print "Volume changed"
+                    , onVolumeCheck = logAction "Volume check"
+                    , pomodoro = Lib.Duration.ofSeconds 25
+                    , turnLength = Lib.Duration.ofSeconds 6
+                    , volume = Volume.default
                     }
               )
             ]

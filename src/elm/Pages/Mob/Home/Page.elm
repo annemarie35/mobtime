@@ -446,24 +446,12 @@ clockArea mob model =
             [ Attr.css
                 [ Css.bottom Css.zero
                 , Css.position Css.absolute
-                , Css.left <| Css.pct 4
+                , Css.left <| Css.pct 13
                 , Css.displayFlex
-                , Css.property "gap" "0.7rem"
+                , UI.Css.gap <| Size.rem 0.7
                 ]
             ]
             [ UI.Button.RoundIcon.view []
-                { target =
-                    UI.Button.RoundIcon.Link <|
-                        Routing.toUrl <|
-                            Routing.Mob
-                                { subRoute = Pages.Mob.Routing.Profile
-                                , mob = mob.name
-                                }
-                , color = Palettes.monochrome.on.background
-                , text = "Profile"
-                , icon = UI.Icons.Ion.user
-                }
-            , UI.Button.RoundIcon.view []
                 { target =
                     UI.Button.RoundIcon.Link <|
                         Routing.toUrl <|

@@ -1,5 +1,7 @@
 module Pages.Mob.Settings.PageView exposing (Props, view)
 
+import Components.Form.Volume.Type exposing (Volume)
+import Components.Form.Volume.View as VolumeView
 import Components.SecondaryPage
 import Css
 import Html.Styled as Html exposing (Html)
@@ -21,15 +23,18 @@ import UI.Typography as Typography
 
 
 type alias Props msg =
-    { mob : MobName
+    { currentPlaylist : Sounds.Profile
     , devMode : Bool
+    , mob : MobName
     , onBack : msg
-    , onTurnLengthChange : Duration -> msg
-    , turnLength : Duration
-    , onPomodoroChange : Duration -> msg
-    , pomodoro : Duration
-    , currentPlaylist : Sounds.Profile
     , onPlaylistChange : Sounds.Profile -> msg
+    , onPomodoroChange : Duration -> msg
+    , onTurnLengthChange : Duration -> msg
+    , onVolumeChange : Volume -> msg
+    , onVolumeCheck : msg
+    , pomodoro : Duration
+    , turnLength : Duration
+    , volume : Volume
     }
 
 
@@ -39,7 +44,7 @@ view props =
         { onBack = props.onBack
         , title = "Settings"
         , icon = UI.Icons.Ion.settings
-        , subTitle = Just "The settings are shared with the whole team"
+        , subTitle = Just "The settings are shared with the team (except the volume)"
         , content =
             Html.div
                 [ Attr.css
@@ -48,56 +53,24 @@ view props =
                     , UI.Css.gap <| Size.rem 3
                     ]
                 ]
-                [ clockLengths props
+                [ Html.div
+                    [ Attr.css
+                        [ Css.displayFlex
+                        , Css.flexDirection Css.column
+                        , UI.Css.gap <| Size.rem 0.6
+                        ]
+                    ]
+                    [ sectionTitle UI.Icons.Ion.user "Personnal"
+                    , VolumeView.display
+                        { onChange = props.onVolumeChange
+                        , onTest = props.onVolumeCheck
+                        , volume = props.volume
+                        }
+                    ]
+                , clockLengths props
                 , playlist props
                 ]
         }
-
-
-playlist : Props msg -> Html msg
-playlist props =
-    Html.div [ Attr.css [ Css.displayFlex, Css.flexDirection Css.column, UI.Css.gap <| Size.rem 0.8 ] ]
-        [ sectionTitle UI.Icons.Tape.display "Playlist"
-        , Html.div
-            [ Attr.css
-                [ Css.displayFlex
-                , Css.flexWrap Css.wrap
-                , Css.justifyContent Css.spaceBetween
-                ]
-            ]
-            (Sounds.allProfiles
-                |> List.map
-                    (\profile ->
-                        viewProfile
-                            { active = props.currentPlaylist
-                            , current = profile
-                            , onChange = props.onPlaylistChange
-                            }
-                    )
-            )
-        ]
-
-
-sectionTitle : Icon msg -> String -> Html msg
-sectionTitle icon title =
-    Html.h3
-        [ Attr.css
-            [ Css.displayFlex
-            , UI.Css.gap <| Size.rem 1
-            , Css.borderBottom3 (Css.px 1) Css.solid <|
-                Color.toElmCss <|
-                    Palettes.monochrome.on.background
-            , Css.paddingBottom <| Css.rem 0.4
-            , Css.alignItems Css.center
-            , Css.margin Css.zero
-            ]
-        ]
-        [ icon
-            { size = Size.rem 2
-            , color = Palettes.monochrome.on.background
-            }
-        , Html.text title
-        ]
 
 
 clockLengths : Props msg -> Html msg
@@ -128,6 +101,28 @@ clockLengths props =
             , max = 45
             , devMode = props.devMode
             }
+        ]
+
+
+sectionTitle : Icon msg -> String -> Html msg
+sectionTitle icon title =
+    Html.h3
+        [ Attr.css
+            [ Css.displayFlex
+            , UI.Css.gap <| Size.rem 1
+            , Css.borderBottom3 (Css.px 1) Css.solid <|
+                Color.toElmCss <|
+                    Palettes.monochrome.on.background
+            , Css.paddingBottom <| Css.rem 0.4
+            , Css.alignItems Css.center
+            , Css.margin Css.zero
+            ]
+        ]
+        [ icon
+            { size = Size.rem 2
+            , color = Palettes.monochrome.on.background
+            }
+        , Html.text title
         ]
 
 
@@ -170,6 +165,30 @@ lengthRange props =
             , max = props.max
             , value = props.length |> durationToInt
             }
+        ]
+
+
+playlist : Props msg -> Html msg
+playlist props =
+    Html.div [ Attr.css [ Css.displayFlex, Css.flexDirection Css.column, UI.Css.gap <| Size.rem 0.8 ] ]
+        [ sectionTitle UI.Icons.Tape.display "Playlist"
+        , Html.div
+            [ Attr.css
+                [ Css.displayFlex
+                , Css.flexWrap Css.wrap
+                , Css.justifyContent Css.spaceBetween
+                ]
+            ]
+            (Sounds.allProfiles
+                |> List.map
+                    (\profile ->
+                        viewProfile
+                            { active = props.currentPlaylist
+                            , current = profile
+                            , onChange = props.onPlaylistChange
+                            }
+                    )
+            )
         ]
 
 

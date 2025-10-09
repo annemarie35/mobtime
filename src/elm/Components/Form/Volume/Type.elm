@@ -1,4 +1,4 @@
-module Components.Form.Volume.Type exposing (Volume(..), decoder, default, encode, open)
+module Components.Form.Volume.Type exposing (Volume(..), decoder, default, encode, open, print)
 
 import Json.Decode as Decode
 import Json.Encode as Json
@@ -16,6 +16,11 @@ default =
 open : Volume -> Int
 open (Volume raw) =
     raw
+
+
+print : Volume -> String
+print =
+    open >> String.fromInt
 
 
 
