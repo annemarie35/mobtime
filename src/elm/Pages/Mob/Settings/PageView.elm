@@ -1,6 +1,5 @@
 module Pages.Mob.Settings.PageView exposing (Props, view)
 
-import Components.Form.Volume.Type exposing (Volume)
 import Components.Form.Volume.View as VolumeView
 import Components.SecondaryPage
 import Css
@@ -30,11 +29,9 @@ type alias Props msg =
     , onPlaylistChange : Sounds.Profile -> msg
     , onPomodoroChange : Duration -> msg
     , onTurnLengthChange : Duration -> msg
-    , onVolumeChange : Volume -> msg
-    , onVolumeCheck : msg
     , pomodoro : Duration
     , turnLength : Duration
-    , volume : Volume
+    , volume : VolumeView.Props msg
     }
 
 
@@ -61,11 +58,7 @@ view props =
                         ]
                     ]
                     [ sectionTitle UI.Icons.Ion.user "Personnal"
-                    , VolumeView.display
-                        { onChange = props.onVolumeChange
-                        , onTest = props.onVolumeCheck
-                        , volume = props.volume
-                        }
+                    , VolumeView.display props.volume
                     ]
                 , clockLengths props
                 , playlist props

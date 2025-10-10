@@ -1,7 +1,6 @@
 module Pages.Mob.Settings.Page exposing (Msg(..), subscriptions, update, view)
 
 import Components.Form.Volume.Field as VolumeField
-import Components.Form.Volume.Type exposing (Volume)
 import Effect exposing (Effect)
 import Lib.Duration exposing (Duration)
 import Model.Events
@@ -20,8 +19,7 @@ type Msg
     | TurnChange Duration
     | PomodoroChange Duration
     | PlaylistChange Sounds.Profile
-    | VolumeChange Volume
-    | VolumeCheck
+    | VolumeMsg VolumeField.Msg
 
 
 update : Shared -> Msg -> Model.Mob.Mob -> ( Model.Mob.Mob, Effect Shared.Msg Msg )
@@ -58,11 +56,8 @@ update shared msg model =
                 |> Effect.share
             )
 
-        VolumeChange volume ->
-            ( model, Effect.fromShared <| Shared.PreferencesMsg <| UserPreferences.VolumeMsg <| VolumeField.Change volume )
-
-        VolumeCheck ->
-            ( model, Effect.fromShared <| Shared.PreferencesMsg <| UserPreferences.VolumeMsg <| VolumeField.Test )
+        VolumeMsg volumeMsg ->
+            ( model, Effect.fromShared <| Shared.PreferencesMsg <| UserPreferences.VolumeMsg volumeMsg )
 
 
 subscriptions : Model.Mob.Mob -> Sub Msg
@@ -83,10 +78,12 @@ view shared model =
             , onPlaylistChange = PlaylistChange
             , onPomodoroChange = PomodoroChange
             , onTurnLengthChange = TurnChange
-            , onVolumeChange = VolumeChange
-            , onVolumeCheck = VolumeCheck
             , pomodoro = model.pomodoroLength
             , turnLength = model.turnLength
-            , volume = shared.preferences.volume
+            , volume =
+                { onChange = VolumeMsg << VolumeField.Change
+                , onTest = VolumeMsg VolumeField.Test
+                , volume = shared.preferences.volume
+                }
             }
     }

@@ -23,11 +23,13 @@ theChapter =
                     , onPlaylistChange = logActionWith Sounds.title "Playlist changed"
                     , onPomodoroChange = logActionWith Lib.Duration.print "Pomodoro changed"
                     , onTurnLengthChange = logActionWith Lib.Duration.print "Turn changed"
-                    , onVolumeChange = logActionWith Volume.print "Volume changed"
-                    , onVolumeCheck = logAction "Volume check"
                     , pomodoro = Lib.Duration.ofMinutes 25
                     , turnLength = Lib.Duration.ofMinutes 6
-                    , volume = Volume.default
+                    , volume =
+                        { onChange = always <| logAction "Volume change"
+                        , onTest = logAction "Test audio at level"
+                        , volume = Volume.Volume 15
+                        }
                     }
               )
             , ( "In dev mode"
@@ -39,11 +41,13 @@ theChapter =
                     , onPlaylistChange = logActionWith Sounds.title "Playlist changed"
                     , onPomodoroChange = logActionWith Lib.Duration.print "Pomodoro changed"
                     , onTurnLengthChange = logActionWith Lib.Duration.print "Turn changed"
-                    , onVolumeChange = logActionWith Volume.print "Volume changed"
-                    , onVolumeCheck = logAction "Volume check"
                     , pomodoro = Lib.Duration.ofSeconds 25
                     , turnLength = Lib.Duration.ofSeconds 6
-                    , volume = Volume.default
+                    , volume =
+                        { onChange = always <| logAction "Volume change"
+                        , onTest = logAction "Test audio at level"
+                        , volume = Volume.Volume 15
+                        }
                     }
               )
             ]
