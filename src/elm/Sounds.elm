@@ -29,7 +29,6 @@ type Profile
     = ClassicWeird
     | OfficeSafe
     | Riot
-    | New
 
 
 poster : Profile -> Image
@@ -43,9 +42,6 @@ poster profile =
                 Riot ->
                     "commune.webp"
 
-                New ->
-                    "WhatsNew-1.webp"
-
                 OfficeSafe ->
                     "officesafe.jpg"
     , alt =
@@ -55,9 +51,6 @@ poster profile =
 
             Riot ->
                 "Comic book drawing of the paris commune revolution"
-
-            New ->
-                "Stylized logo saying \"What's new\""
 
             OfficeSafe ->
                 "An office meeting room full of multicolored plastic balls"
@@ -82,9 +75,6 @@ nextProfile list =
             nextProfile (OfficeSafe :: list)
 
         Just OfficeSafe ->
-            nextProfile (New :: list)
-
-        Just New ->
             list
 
 
@@ -96,9 +86,6 @@ title profile =
 
         Riot ->
             "Riot"
-
-        New ->
-            "New 2022/11"
 
         OfficeSafe ->
             "Office Safe"
@@ -112,9 +99,6 @@ code profile =
 
         Riot ->
             "Riot"
-
-        New ->
-            "New2022/11"
 
         OfficeSafe ->
             "OfficeSafe"
@@ -153,46 +137,10 @@ soundsOf profile =
             , riot
             )
 
-        New ->
-            ( "classic-weird/banane.wav.mp3"
-            , newSounds
-            )
-
         OfficeSafe ->
             ( "classic-weird/celebration.mp3"
             , officeSafe
             )
-
-
-newSounds : List Sound
-newSounds =
-    [ "classic-weird/aroundtheworld.wav.mp3"
-    , "classic-weird/banane.wav.mp3"
-    , "classic-weird/blablabla.wav.mp3"
-    , "classic-weird/boneym_rasputin.wav.mp3"
-    , "classic-weird/carldouglas_kungfufighting.wav.mp3"
-    , "classic-weird/chic_freak.wav.mp3"
-    , "classic-weird/coolio_ganstaparadise.wav.mp3"
-    , "classic-weird/didiersuper_gensquibossent.wav.mp3"
-    , "classic-weird/digitallove.wav.mp3"
-    , "classic-weird/doors_strange.wav.mp3"
-    , "classic-weird/drdre_stilldre.wav.mp3"
-    , "classic-weird/eminem_slimshady.wav.mp3"
-    , "classic-weird/indochine_aventurier.wav.mp3"
-    , "classic-weird/kiss_madeforlovingyou.wav.mp3"
-    , "classic-weird/lmfao_partyrockanthem.wav.mp3"
-    , "classic-weird/matmatah_apologie.wav.mp3"
-    , "classic-weird/mjackson_beatit.wav.mp3"
-    , "classic-weird/queen_breakfree.wav.mp3"
-    , "classic-weird/rickroll.wav.mp3"
-    , "classic-weird/smokeonthewater.wav.mp3"
-    , "classic-weird/spindoctors_twoprinces.wav.mp3"
-    , "classic-weird/sweethomealabam.wav.mp3"
-    , "classic-weird/thislove.wav.mp3"
-    , "classic-weird/toto_africa.wav.mp3"
-    , "classic-weird/toxic.wav.mp3"
-    , "riot/eiffel_larue.wav.mp3"
-    ]
 
 
 riot : List Sound
