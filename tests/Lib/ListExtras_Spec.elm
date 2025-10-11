@@ -1,4 +1,4 @@
-module Lib.LibExtras_Spec exposing (suite)
+module Lib.ListExtras_Spec exposing (suite)
 
 import Expect
 import Lib.ListExtras exposing (rotate, zip)
