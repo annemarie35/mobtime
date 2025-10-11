@@ -22,8 +22,10 @@ theChapter =
                     , onBack = logAction "Back"
                     , onPlaylistChange = logActionWith Sounds.title "Playlist changed"
                     , onPomodoroChange = logActionWith Lib.Duration.print "Pomodoro changed"
-                    , onTurnLengthChange = logActionWith Lib.Duration.print "Turn changed"
+                    , onTurnLengthChange = logActionWith (Lib.Duration.toLongString >> String.join " ") "Turn changed"
+                    , onExtremeModeChange = logAction "Extreme mode toggled"
                     , pomodoro = Lib.Duration.ofMinutes 25
+                    , extremeMode = False
                     , turnLength = Lib.Duration.ofMinutes 6
                     , volume =
                         { onChange = always <| logAction "Volume change"
@@ -32,17 +34,19 @@ theChapter =
                         }
                     }
               )
-            , ( "In dev mode"
+            , ( "Extreme Mode"
               , Page.view
                     { currentPlaylist = Sounds.ClassicWeird
-                    , devMode = True
+                    , devMode = False
                     , mob = MobName "Awesome"
                     , onBack = logAction "Back"
                     , onPlaylistChange = logActionWith Sounds.title "Playlist changed"
                     , onPomodoroChange = logActionWith Lib.Duration.print "Pomodoro changed"
-                    , onTurnLengthChange = logActionWith Lib.Duration.print "Turn changed"
-                    , pomodoro = Lib.Duration.ofSeconds 25
-                    , turnLength = Lib.Duration.ofSeconds 6
+                    , onTurnLengthChange = logActionWith (Lib.Duration.toLongString >> String.join " ") "Turn changed"
+                    , onExtremeModeChange = logAction "Extreme mode toggled"
+                    , pomodoro = Lib.Duration.ofMinutes 25
+                    , extremeMode = True
+                    , turnLength = Lib.Duration.ofMinutes 1
                     , volume =
                         { onChange = always <| logAction "Volume change"
                         , onTest = logAction "Test audio at level"

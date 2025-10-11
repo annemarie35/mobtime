@@ -11,10 +11,8 @@ doc =
     chapter "Toggle"
         |> withComponent
             (Components.Form.Toggle.View.view
-                { id = "id"
-                , onToggle = logAction "Toggled"
+                { onToggle = logAction "Toggled"
                 , value = True
-                , label = "My Toggle"
                 , labelOn = Just "On"
                 , labelOff = Just "Off"
                 }
@@ -28,10 +26,8 @@ type Msg
     | ...
 
 Components.Form.Toggle.View.view
-    { id = "id"
-    , onToggle = Toggled
+    { onToggle = Toggled
     , value = True
-    , label = "My Toggle"
     , labelOn = Just "On"
     , labelOff = Just "Off"
     }

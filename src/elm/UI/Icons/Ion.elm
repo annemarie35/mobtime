@@ -8,6 +8,7 @@ module UI.Icons.Ion exposing
     , copy
     , delete
     , error
+    , fireball
     , github
     , home
     , musicNote
@@ -172,6 +173,11 @@ people =
 questionMark : Icon msg
 questionMark =
     display Ionicon.helpCircled
+
+
+fireball : Icon msg
+fireball =
+    display Ionicon.speedometer
 
 
 display :

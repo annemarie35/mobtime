@@ -23,6 +23,7 @@ type alias Mob =
     , mobbers : Mobbers
     , roles : Model.Roles.Roles
     , soundProfile : Sounds.Profile
+    , extremeMode : Bool
     }
 
 
@@ -36,6 +37,7 @@ init mob =
     , mobbers = Mobbers.empty
     , roles = Model.Roles.default
     , soundProfile = Sounds.ClassicWeird
+    , extremeMode = False
     }
 
 
@@ -124,6 +126,11 @@ evolve_ event ( state, previousCommand ) =
 
         Events.PomodoroLengthChanged duration ->
             ( { state | pomodoroLength = duration }
+            , previousCommand
+            )
+
+        Events.ExtremeModeChanged extreme ->
+            ( { state | extremeMode = extreme }
             , previousCommand
             )
 

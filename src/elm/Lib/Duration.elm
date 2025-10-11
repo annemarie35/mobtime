@@ -1,4 +1,27 @@
-module Lib.Duration exposing (Duration(..), DurationStringParts, addToTime, between, digitalPrint, jsonDecoder, minus, multiply, ofMillis, ofMinutes, ofSeconds, print, ratio, secondsBetween, toJson, toLongString, toMillis, toMinutes, toSeconds)
+module Lib.Duration exposing
+    ( Duration(..)
+    , DurationStringParts
+    , Unit(..)
+    , addToTime
+    , between
+    , digitalPrint
+    , fromInt
+    , jsonDecoder
+    , minus
+    , multiply
+    , ofMillis
+    , ofMinutes
+    , ofSeconds
+    , print
+    , printLong
+    , ratio
+    , secondsBetween
+    , toInt
+    , toJson
+    , toLongString
+    , toMillis
+    , toSeconds
+    )
 
 import Json.Decode as Decode
 import Json.Encode as Json
@@ -10,8 +33,79 @@ type Duration
     = Duration Int
 
 
+type Unit
+    = Minutes
+    | Seconds
+
+
 type alias DurationStringParts =
     List String
+
+
+
+-- Constructors
+
+
+fromInt : Unit -> Int -> Duration
+fromInt unit =
+    case unit of
+        Minutes ->
+            ofMinutes
+
+        Seconds ->
+            ofSeconds
+
+
+ofMillis : Int -> Duration
+ofMillis int =
+    Duration int
+
+
+ofSeconds : Int -> Duration
+ofSeconds seconds =
+    ofMillis <| seconds * 1000
+
+
+ofMinutes : Int -> Duration
+ofMinutes minutes =
+    ofSeconds <| minutes * 60
+
+
+
+-- To Ints
+
+
+toInt : Unit -> Duration -> Int
+toInt unit =
+    case unit of
+        Minutes ->
+            toMinutes
+
+        Seconds ->
+            toSeconds
+
+
+toSeconds : Duration -> Int
+toSeconds duration =
+    case duration of
+        Duration s ->
+            s // 1000
+
+
+toMillis : Duration -> Int
+toMillis duration =
+    case duration of
+        Duration s ->
+            s
+
+
+toMinutes : Duration -> Int
+toMinutes duration =
+    toSeconds duration // 60
+
+
+
+-- Computations
 
 
 addToTime : Duration -> Time.Posix -> Time.Posix
@@ -35,17 +129,6 @@ multiply multiplier duration =
         |> ofMillis
 
 
-toJson : Duration -> Json.Value
-toJson duration =
-    Json.int <| toMillis duration
-
-
-jsonDecoder : Decode.Decoder Duration
-jsonDecoder =
-    Decode.int
-        |> Decode.map ofMillis
-
-
 secondsBetween : Time.Posix -> Time.Posix -> Int
 secondsBetween a b =
     toSeconds <| between a b
@@ -64,6 +147,13 @@ div numerator denominator =
     ofMillis <| toMillis numerator // denominator
 
 
+subtract : Duration -> Duration -> Duration
+subtract a b =
+    toSeconds a
+        - toSeconds b
+        |> ofSeconds
+
+
 ratio : Duration -> Duration -> Float
 ratio numerator denominator =
     let
@@ -76,50 +166,33 @@ ratio numerator denominator =
     numeratorSeconds / denominatorSeconds
 
 
-toSeconds : Duration -> Int
-toSeconds duration =
-    case duration of
-        Duration s ->
-            s // 1000
+
+-- Json
 
 
-toMillis : Duration -> Int
-toMillis duration =
-    case duration of
-        Duration s ->
-            s
+toJson : Duration -> Json.Value
+toJson duration =
+    Json.int <| toMillis duration
 
 
-toMinutes : Duration -> Int
-toMinutes duration =
-    toSeconds duration // 60
+jsonDecoder : Decode.Decoder Duration
+jsonDecoder =
+    Decode.int
+        |> Decode.map ofMillis
 
 
-ofMillis : Int -> Duration
-ofMillis int =
-    Duration int
 
-
-ofSeconds : Int -> Duration
-ofSeconds seconds =
-    ofMillis <| seconds * 1000
-
-
-ofMinutes : Int -> Duration
-ofMinutes minutes =
-    ofSeconds <| minutes * 60
-
-
-subtract : Duration -> Duration -> Duration
-subtract a b =
-    toSeconds a
-        - toSeconds b
-        |> ofSeconds
+-- Print
 
 
 print : Duration -> String
-print duration =
-    toShortString duration |> String.join " "
+print =
+    toShortString >> String.join " "
+
+
+printLong : Duration -> String
+printLong =
+    toLongString >> String.join " "
 
 
 toShortString : Duration -> List String

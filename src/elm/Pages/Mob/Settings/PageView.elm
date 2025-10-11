@@ -1,12 +1,13 @@
 module Pages.Mob.Settings.PageView exposing (Props, view)
 
+import Components.Form.Toggle.View
 import Components.Form.Volume.View as VolumeView
 import Components.SecondaryPage
 import Css
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attr
 import Html.Styled.Events as Evts
-import Lib.Duration as Duration exposing (Duration)
+import Lib.Duration as Duration exposing (Duration, Unit(..))
 import Model.MobName exposing (MobName)
 import Sounds
 import UI.Color as Color
@@ -29,6 +30,8 @@ type alias Props msg =
     , onPlaylistChange : Sounds.Profile -> msg
     , onPomodoroChange : Duration -> msg
     , onTurnLengthChange : Duration -> msg
+    , onExtremeModeChange : msg
+    , extremeMode : Bool
     , pomodoro : Duration
     , turnLength : Duration
     , volume : VolumeView.Props msg
@@ -81,15 +84,27 @@ viewClockLengths props =
             ]
         ]
         [ sectionTitle UI.Icons.Ion.clock "Clocks"
-        , lengthRange
-            { title = "Turn"
-            , icon = UI.Icons.Custom.hourGlass
-            , length = props.turnLength
-            , onChange = props.onTurnLengthChange
-            , min = 2
-            , max = 15
-            , devMode = props.devMode
-            }
+        , if props.extremeMode then
+            lengthRange
+                { title = "Turn"
+                , icon = UI.Icons.Custom.hourGlass
+                , length = props.turnLength
+                , onChange = props.onTurnLengthChange
+                , min = 1
+                , max = 120
+                , unit = Seconds
+                }
+
+          else
+            lengthRange
+                { title = "Turn"
+                , icon = UI.Icons.Custom.hourGlass
+                , length = props.turnLength
+                , onChange = props.onTurnLengthChange
+                , min = 2
+                , max = 15
+                , unit = Minutes
+                }
         , lengthRange
             { title = "Pomodoro"
             , icon = UI.Icons.Custom.tomato
@@ -97,8 +112,9 @@ viewClockLengths props =
             , onChange = props.onPomodoroChange
             , min = 10
             , max = 45
-            , devMode = props.devMode
+            , unit = Minutes
             }
+        , viewExtremeMode props
         ]
 
 
@@ -131,22 +147,14 @@ lengthRange :
     , onChange : Duration -> msg
     , min : Int
     , max : Int
-    , devMode : Bool
+    , unit : Duration.Unit
     }
     -> Html msg
 lengthRange props =
-    let
-        ( durationToInt, durationFromInt ) =
-            if props.devMode then
-                ( Duration.toSeconds, Duration.ofSeconds )
-
-            else
-                ( Duration.toMinutes, Duration.ofMinutes )
-    in
     Html.div
         [ Attr.css
             [ Css.displayFlex
-            , UI.Css.gap <| Size.rem 2
+            , UI.Css.gap <| Size.rem 1
             , Css.alignItems Css.center
             ]
         ]
@@ -154,14 +162,63 @@ lengthRange props =
             { size = Size.rem 2
             , color = Palettes.monochrome.on.background
             }
-        , Html.span
-            [ Attr.css [ Css.width <| Css.rem 18 ] ]
-            [ Html.text <| props.title ++ ": " ++ Duration.print props.length ]
-        , UI.Range.View.view
-            { onChange = durationFromInt >> props.onChange
-            , min = props.min
-            , max = props.max
-            , value = props.length |> durationToInt
+        , Html.div
+            [ Attr.css
+                [ Css.width <| Css.px 142
+                , Css.flexShrink (Css.int 1)
+                ]
+            ]
+            [ Html.text <| props.title ++ ": " ++ Duration.printLong props.length ]
+        , Html.div
+            [ Attr.css
+                [ Css.flexGrow <| Css.int 1
+                ]
+            ]
+            [ UI.Range.View.view
+                { onChange = Duration.fromInt props.unit >> props.onChange
+                , min = props.min
+                , max = props.max
+                , value = props.length |> Duration.toInt props.unit
+                }
+            ]
+        ]
+
+
+viewExtremeMode : Props msg -> Html msg
+viewExtremeMode props =
+    Html.div
+        [ Attr.css
+            [ Css.displayFlex
+            , UI.Css.gap <| Size.rem 1
+            , Css.alignItems Css.center
+            ]
+        ]
+        [ UI.Icons.Ion.fireball
+            { size = Size.rem 2
+            , color = Palettes.monochrome.on.background
+            }
+        , Html.div
+            [ Attr.css
+                [ Css.width <| Css.px 142
+                , Css.displayFlex
+                , UI.Css.gap <| Size.rem 0.4
+                , Css.alignItems Css.center
+                ]
+            ]
+            [ Html.text "Extreme Mode"
+            , Html.span
+                [ Attr.title "Allows for turn lenghts shorter than 2 minutes" ]
+                [ UI.Icons.Ion.questionMark
+                    { size = Size.rem 1
+                    , color = Palettes.monochrome.on.background
+                    }
+                ]
+            ]
+        , Components.Form.Toggle.View.view
+            { onToggle = props.onExtremeModeChange
+            , value = props.extremeMode
+            , labelOn = Just "On"
+            , labelOff = Just "Off"
             }
         ]
 

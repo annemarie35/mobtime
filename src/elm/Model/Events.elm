@@ -43,6 +43,7 @@ type Event
     | Unknown Decode.Value
     | PomodoroStopped
     | PomodoroLengthChanged Duration
+    | ExtremeModeChanged Bool
 
 
 
@@ -107,6 +108,11 @@ eventFromNameDecoder eventName =
             Model.Roles.decoder
                 |> Decode.field "roles"
                 |> Decode.map ChangedRoles
+
+        "ExtremeModeChanged" ->
+            Decode.bool
+                |> Decode.field "value"
+                |> Decode.map ExtremeModeChanged
 
         _ ->
             Decode.fail <| "I don't know this event " ++ eventName
@@ -187,6 +193,11 @@ eventToJson event =
         PomodoroLengthChanged duration ->
             [ ( "name", Json.string "PomodoroLengthChanged" )
             , ( "seconds", Json.int <| Lib.Duration.toSeconds duration )
+            ]
+
+        ExtremeModeChanged extreme ->
+            [ ( "name", Json.string "ExtremeModeChanged" )
+            , ( "value", Json.bool extreme )
             ]
 
 

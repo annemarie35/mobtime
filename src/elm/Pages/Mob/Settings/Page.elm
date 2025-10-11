@@ -20,6 +20,7 @@ type Msg
     | PomodoroChange Duration
     | PlaylistChange Sounds.Profile
     | VolumeMsg VolumeField.Msg
+    | ExtremeModeToggle
 
 
 update : Shared -> Msg -> Model.Mob.Mob -> ( Model.Mob.Mob, Effect Shared.Msg Msg )
@@ -57,7 +58,23 @@ update shared msg model =
             )
 
         VolumeMsg volumeMsg ->
-            ( model, Effect.fromShared <| Shared.PreferencesMsg <| UserPreferences.VolumeMsg volumeMsg )
+            ( model
+            , UserPreferences.VolumeMsg volumeMsg
+                |> Shared.PreferencesMsg
+                |> Effect.fromShared
+            )
+
+        ExtremeModeToggle ->
+            let
+                updated =
+                    not model.extremeMode
+            in
+            ( { model | extremeMode = updated }
+            , updated
+                |> Model.Events.ExtremeModeChanged
+                |> Model.Events.MobEvent model.name
+                |> Effect.share
+            )
 
 
 subscriptions : Model.Mob.Mob -> Sub Msg
@@ -78,6 +95,8 @@ view shared model =
             , onPlaylistChange = PlaylistChange
             , onPomodoroChange = PomodoroChange
             , onTurnLengthChange = TurnChange
+            , onExtremeModeChange = ExtremeModeToggle
+            , extremeMode = model.extremeMode
             , pomodoro = model.pomodoroLength
             , turnLength = model.turnLength
             , volume =
