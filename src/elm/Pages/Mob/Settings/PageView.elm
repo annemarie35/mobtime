@@ -50,24 +50,29 @@ view props =
                     , UI.Css.gap <| Size.rem 3
                     ]
                 ]
-                [ Html.div
-                    [ Attr.css
-                        [ Css.displayFlex
-                        , Css.flexDirection Css.column
-                        , UI.Css.gap <| Size.rem 0.6
-                        ]
-                    ]
-                    [ sectionTitle UI.Icons.Ion.user "Personnal"
-                    , VolumeView.display props.volume
-                    ]
-                , clockLengths props
-                , playlist props
+                [ viewPersonalSection props
+                , viewClockLengths props
+                , viewPlaylist props
                 ]
         }
 
 
-clockLengths : Props msg -> Html msg
-clockLengths props =
+viewPersonalSection : Props msg -> Html msg
+viewPersonalSection props =
+    Html.div
+        [ Attr.css
+            [ Css.displayFlex
+            , Css.flexDirection Css.column
+            , UI.Css.gap <| Size.rem 0.6
+            ]
+        ]
+        [ sectionTitle UI.Icons.Ion.user "Personnal"
+        , VolumeView.display props.volume
+        ]
+
+
+viewClockLengths : Props msg -> Html msg
+viewClockLengths props =
     Html.div
         [ Attr.css
             [ Css.displayFlex
@@ -161,8 +166,8 @@ lengthRange props =
         ]
 
 
-playlist : Props msg -> Html msg
-playlist props =
+viewPlaylist : Props msg -> Html msg
+viewPlaylist props =
     Html.div [ Attr.css [ Css.displayFlex, Css.flexDirection Css.column, UI.Css.gap <| Size.rem 0.8 ] ]
         [ sectionTitle UI.Icons.Tape.display "Playlist"
         , Html.div
